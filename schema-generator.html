@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Schema Forge — JSON-LD Generator for SEO & AEO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0b0c;
+    --bg-elev: #131316;
+    --bg-card: #17171b;
+    --ink: #f4f1ea;
+    --ink-dim: #a8a39a;
+    --ink-mute: #6b665e;
+    --accent: #ff5b1f;
+    --accent-glow: #ff7a47;
+    --lime: #d4ff3a;
+    --border: #262629;
+    --border-warm: #3a2a1e;
+    --success: #7dd87d;
+    --error: #ff6b6b;
+    --serif: 'Fraunces', 'Times New Roman', serif;
+    --mono: 'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-weight: 400;
+    line-height: 1.55;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 91, 31, 0.15), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 100%, rgba(212, 255, 58, 0.06), transparent 60%);
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.4;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 2; }
+
+  /* Header */
+  header {
+    padding: 28px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .logo-mark {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    font-family: var(--serif);
+    font-weight: 900;
+    font-style: italic;
+    color: var(--bg);
+    font-size: 18px;
+  }
+
+  .header-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-mute);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: right;
+  }
+  .header-meta span { color: var(--lime); }
+
+  /* Hero */
+  .hero {
+    padding: 80px 0 60px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(48px, 8vw, 104px);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: 32px;
+    font-variation-settings: "opsz" 144;
+  }
+  h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  h1 .underline {
+    position: relative;
+    display: inline-block;
+  }
+  h1 .underline::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 0.08em;
+    height: 0.08em;
+    background: var(--lime);
+    opacity: 0.5;
+  }
+
+  .hero-sub {
+    font-size: 19px;
+    color: var(--ink-dim);
+    max-width: 620px;
+    margin-bottom: 48px;
+    line-height: 1.5;
+  }
+
+  /* Input area */
+  .forge-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .forge-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .input-row {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .url-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 22px;
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--ink);
+    transition: all 0.2s ease;
+  }
+  .url-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(255, 91, 31, 0.15);
+  }
+  .url-input::placeholder { color: var(--ink-mute); }
+
+  .forge-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    padding: 18px 32px;
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+    font-style: italic;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+  }
+  .forge-btn:hover:not(:disabled) {
+    background: var(--accent-glow);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(255, 91, 31, 0.3);
+  }
+  .forge-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .options-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 6px;
+    margin-top: 20px;
+    align-items: center;
+  }
+  .options-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-right: 4px;
+  }
+  .chip {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink-dim);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-transform: uppercase;
+  }
+  .chip:hover { color: var(--ink); border-color: var(--ink-mute); }
+  .chip.active {
+    background: var(--lime);
+    color: var(--bg);
+    border-color: var(--lime);
+    font-weight: 500;
+  }
+
+  /* Status */
+  .status {
+    margin-top: 20px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-dim);
+    letter-spacing: 0.05em;
+  }
+  .status.active { display: flex; }
+  .status.error { color: var(--error); }
+  .status.success { color: var(--success); }
+  .spinner {
+    width: 14px; height: 14px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Results */
+  .results {
+    display: none;
+    padding: 80px 0;
+    animation: fadeUp 0.6s ease;
+  }
+  .results.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+  }
+  .results-header h2 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .results-header h2 em { font-style: italic; color: var(--accent); }
+  .results-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-mute);
+    text-align: right;
+  }
+  .results-meta strong { color: var(--lime); }
+
+  .page-summary {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .summary-item .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 6px;
+  }
+  .summary-item .value {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--ink);
+    word-break: break-word;
+  }
+
+  .schemas {
+    display: grid;
+    gap: 16px;
+  }
+
+  .schema-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+  }
+  .schema-card:hover { border-color: var(--border-warm); }
+
+  .schema-header {
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+  .schema-card.open .schema-header { border-bottom-color: var(--border); }
+
+  .schema-title-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .schema-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .schema-badge.optional {
+    background: transparent;
+    border: 1px solid var(--ink-mute);
+    color: var(--ink-dim);
+  }
+
+  .schema-title {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .schema-title em { font-style: italic; color: var(--accent); }
+
+  .schema-desc {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ink-dim);
+    margin-top: 2px;
+    font-style: italic;
+  }
+
+  .schema-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .icon-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink-dim);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .icon-btn:hover { color: var(--ink); border-color: var(--ink-mute); background: var(--bg-elev); }
+  .icon-btn.copied { background: var(--lime); color: var(--bg); border-color: var(--lime); }
+
+  .chevron {
+    width: 24px; height: 24px;
+    display: grid; place-items: center;
+    color: var(--ink-mute);
+    transition: transform 0.2s ease;
+  }
+  .schema-card.open .chevron { transform: rotate(180deg); color: var(--ink); }
+
+  .schema-body {
+    display: none;
+    padding: 0 24px 24px;
+  }
+  .schema-card.open .schema-body { display: block; }
+
+  .code-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink);
+    overflow-x: auto;
+    white-space: pre;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  .code-block::-webkit-scrollbar { width: 8px; height: 8px; }
+  .code-block::-webkit-scrollbar-track { background: var(--bg-elev); }
+  .code-block::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* Syntax highlighting */
+  .tok-key { color: var(--accent-glow); }
+  .tok-str { color: var(--lime); }
+  .tok-num { color: #a0d4ff; }
+  .tok-bool { color: #ff9ec4; }
+  .tok-punct { color: var(--ink-mute); }
+
+  .schema-note {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: var(--bg-elev);
+    border-left: 2px solid var(--lime);
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    color: var(--ink-dim);
+    line-height: 1.55;
+  }
+  .schema-note strong { color: var(--lime); font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+
+  /* Footer */
+  footer {
+    padding: 48px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: end;
+  }
+  .footer-brand h3 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .footer-brand h3 span { color: var(--accent); }
+  .footer-brand p {
+    color: var(--ink-mute);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .footer-links {
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-mute);
+    line-height: 2;
+  }
+  .footer-links a { color: var(--ink-dim); text-decoration: none; transition: color 0.15s; }
+  .footer-links a:hover { color: var(--lime); }
+
+  /* Empty state */
+  .empty-note {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ink-mute);
+    font-style: italic;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--lime);
+    color: var(--bg);
+    padding: 14px 26px;
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 768px) {
+    .container { padding: 0 20px; }
+    .input-row { flex-direction: column; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-links { text-align: left; }
+    .forge-card { padding: 24px 20px; }
+    .schema-header { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="logo">
+      <div class="logo-mark">S</div>
+      <span>Schema Forge</span>
+    </div>
+    <div class="header-meta">
+      Built for <span>SEO + AEO</span> teams<br>
+      Reusable · Shareable · Free
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">JSON-LD Generator · v1.0</div>
+    <h1>
+      Forge <em>structured data</em><br>
+      that search <span class="underline">and AI</span> love.
+    </h1>
+    <p class="hero-sub">
+      Paste any URL. We'll analyze the page, detect its type, and generate every applicable schema.org markup — ready to paste into your <code style="font-family:var(--mono);color:var(--accent-glow);font-size:0.9em;">&lt;head&gt;</code>. Built for AI Overviews, ChatGPT citations, and traditional rich results.
+    </p>
+
+    <div class="forge-card">
+      <div class="input-row">
+        <input
+          type="url"
+          id="urlInput"
+          class="url-input"
+          placeholder="https://example.com/page-to-analyze"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button class="forge-btn" id="generateBtn">
+          Generate Schemas →
+        </button>
+      </div>
+
+      <div class="options-row">
+        <span class="options-label">Include:</span>
+        <button class="chip active" data-opt="organization">Organization</button>
+        <button class="chip active" data-opt="website">WebSite</button>
+        <button class="chip active" data-opt="webpage">WebPage</button>
+        <button class="chip active" data-opt="breadcrumb">BreadcrumbList</button>
+        <button class="chip active" data-opt="article">Article</button>
+        <button class="chip active" data-opt="faq">FAQPage</button>
+        <button class="chip active" data-opt="howto">HowTo</button>
+        <button class="chip active" data-opt="product">Product</button>
+        <button class="chip active" data-opt="video">VideoObject</button>
+        <button class="chip active" data-opt="author">Person</button>
+      </div>
+
+      <div class="status" id="status">
+        <div class="spinner"></div>
+        <span id="statusText">Fetching page…</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="results" id="results">
+    <div class="results-header">
+      <h2>Your <em>schemas</em></h2>
+      <div class="results-meta" id="resultsMeta"></div>
+    </div>
+
+    <div class="page-summary" id="pageSummary"></div>
+
+    <div class="schemas" id="schemasList"></div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>Schema <span>Forge</span></h3>
+        <p>A microsite for structured data · Share the URL with your team</p>
+      </div>
+      <div class="footer-links">
+        <a href="https://schema.org" target="_blank" rel="noopener">schema.org →</a><br>
+        <a href="https://search.google.com/test/rich-results" target="_blank" rel="noopener">Google Rich Results Test →</a><br>
+        <a href="https://validator.schema.org" target="_blank" rel="noopener">Schema Validator →</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+/* ==========================================================================
+   SCHEMA FORGE — URL → JSON-LD
+   ==========================================================================
+   Strategy:
+   1. Fetch the URL via a CORS proxy (allorigins.win) — free, no key needed
+   2. Parse the HTML to extract metadata (title, description, OG tags, headings, etc.)
+   3. Detect content type (article, product, FAQ, how-to, etc.)
+   4. Generate schema.org JSON-LD for every applicable type
+   5. Present each with copy-to-clipboard + notes
+   ========================================================================== */
+
+/* ==========================================================================
+   CONFIGURE YOUR CLOUDFLARE WORKER URL HERE
+   ==========================================================================
+   1. Deploy the Cloudflare Worker (see cloudflare-worker.js)
+   2. Replace the URL below with YOUR Worker URL
+   3. Public fallbacks are kept as a safety net but your Worker is tried first
+   ========================================================================== */
+const WORKER_URL = 'https://schema-forge-proxy.nupura-u.workers.dev';
+
+const PROXIES = [
+  url => `${WORKER_URL}/?url=${encodeURIComponent(url)}`,
+  url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+  url => `https://corsproxy.io/?${encodeURIComponent(url)}`
+];
+
+const state = {
+  enabled: new Set(['organization','website','webpage','breadcrumb','article','faq','howto','product','video','author'])
+};
+
+// --- Chip toggles ---
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const opt = chip.dataset.opt;
+    if (state.enabled.has(opt)) { state.enabled.delete(opt); chip.classList.remove('active'); }
+    else { state.enabled.add(opt); chip.classList.add('active'); }
+  });
+});
+
+// --- Main action ---
+document.getElementById('generateBtn').addEventListener('click', runGeneration);
+document.getElementById('urlInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runGeneration();
+});
+
+async function runGeneration() {
+  const input = document.getElementById('urlInput');
+  const btn = document.getElementById('generateBtn');
+  const status = document.getElementById('status');
+  const statusText = document.getElementById('statusText');
+
+  let url = input.value.trim();
+  if (!url) { flashStatus('Please enter a URL', 'error'); return; }
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+  try { new URL(url); } catch {
+    flashStatus('That URL doesn\'t look valid', 'error'); return;
+  }
+
+  btn.disabled = true;
+  status.className = 'status active';
+  statusText.textContent = 'Fetching page…';
+
+  try {
+    const html = await fetchPage(url);
+    statusText.textContent = 'Analyzing content…';
+    await sleep(200);
+    const pageData = parseHTML(html, url);
+    statusText.textContent = 'Forging schemas…';
+    await sleep(200);
+    const schemas = generateAllSchemas(pageData);
+    renderResults(pageData, schemas, url);
+    status.className = 'status active success';
+    statusText.textContent = `✓ Generated ${schemas.length} schema${schemas.length !== 1 ? 's' : ''}`;
+    setTimeout(() => { status.className = 'status'; }, 3000);
+  } catch (err) {
+    console.error(err);
+    status.className = 'status active error';
+    statusText.textContent = `✗ ${err.message || 'Failed to fetch page'}`;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function flashStatus(msg, kind = '') {
+  const status = document.getElementById('status');
+  const statusText = document.getElementById('statusText');
+  status.className = `status active ${kind}`;
+  statusText.textContent = msg;
+  setTimeout(() => { status.className = 'status'; }, 2500);
+}
+
+// --- Fetch with proxy fallback ---
+async function fetchPage(url) {
+  const errors = [];
+  for (let i = 0; i < PROXIES.length; i++) {
+    const proxy = PROXIES[i];
+    const proxyName = i === 0 ? 'Cloudflare Worker' : i === 1 ? 'allorigins.win' : 'corsproxy.io';
+    try {
+      const res = await fetch(proxy(url));
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json().catch(async () => ({ contents: await res.text() }));
+      const html = data.contents || data;
+      if (typeof html === 'string' && html.length > 100) return html;
+      throw new Error('Empty response');
+    } catch (e) {
+      errors.push(`${proxyName}: ${e.message}`);
+    }
+  }
+  const isWorkerConfigured = !WORKER_URL.includes('YOUR-NAME');
+  const hint = isWorkerConfigured
+    ? 'Your Worker and both public proxies failed. Check the target site allows fetching.'
+    : 'Public proxies are blocked on your network. Deploy the Cloudflare Worker (see cloudflare-worker.js) for a reliable fix.';
+  throw new Error(`All proxies failed. ${hint}\n\nDetails: ${errors.join(' · ')}`);
+}
+
+// --- HTML parsing ---
+function parseHTML(html, sourceUrl) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const url = new URL(sourceUrl);
+
+  const getMeta = (name) => {
+    const el = doc.querySelector(`meta[name="${name}"]`) || doc.querySelector(`meta[property="${name}"]`);
+    return el ? el.getAttribute('content') || '' : '';
+  };
+
+  const resolveUrl = (href) => { try { return new URL(href, sourceUrl).href; } catch { return href; } };
+
+  // Title
+  const title = (doc.querySelector('title')?.textContent || getMeta('og:title') || '').trim();
+
+  // Description
+  const description = (getMeta('description') || getMeta('og:description') || getMeta('twitter:description') || '').trim();
+
+  // Open Graph
+  const ogType = getMeta('og:type') || '';
+  const ogImage = resolveUrl(getMeta('og:image') || getMeta('twitter:image') || '');
+  const ogSiteName = getMeta('og:site_name') || '';
+  const ogUrl = getMeta('og:url') || sourceUrl;
+  const canonical = doc.querySelector('link[rel="canonical"]')?.href || ogUrl;
+
+  // Author
+  const author = getMeta('author') || getMeta('article:author') || doc.querySelector('[rel="author"]')?.textContent?.trim() || '';
+
+  // Dates
+  const publishedDate = getMeta('article:published_time') || getMeta('datePublished') || getMeta('pubdate') || doc.querySelector('time[datetime]')?.getAttribute('datetime') || '';
+  const modifiedDate = getMeta('article:modified_time') || getMeta('dateModified') || getMeta('lastmod') || '';
+
+  // Language
+  const lang = doc.documentElement.getAttribute('lang') || 'en';
+
+  // Headings
+  const h1 = doc.querySelector('h1')?.textContent?.trim() || '';
+  const headings = Array.from(doc.querySelectorAll('h1, h2, h3')).map(h => ({
+    level: parseInt(h.tagName.slice(1)),
+    text: h.textContent.trim()
+  })).filter(h => h.text.length > 0 && h.text.length < 300);
+
+  // Favicon / logo
+  const favicon = resolveUrl(
+    doc.querySelector('link[rel="icon"]')?.href ||
+    doc.querySelector('link[rel="shortcut icon"]')?.href ||
+    doc.querySelector('link[rel="apple-touch-icon"]')?.href ||
+    `${url.origin}/favicon.ico`
+  );
+
+  // Existing JSON-LD
+  const existingLd = [];
+  doc.querySelectorAll('script[type="application/ld+json"]').forEach(s => {
+    try { existingLd.push(JSON.parse(s.textContent)); } catch {}
+  });
+
+  // Detect FAQ (Q/A patterns) — look for consecutive h2/h3 + paragraph
+  const faqs = detectFAQs(doc);
+
+  // Detect HowTo steps (ol with multiple li, or h2+description pattern)
+  const howToSteps = detectHowTo(doc);
+
+  // Detect product (price, currency, SKU signals)
+  const productData = detectProduct(doc, getMeta);
+
+  // Detect article (article tag, long form content, datePublished)
+  const isArticle = !!(publishedDate || doc.querySelector('article') || ogType === 'article' || (headings.length > 3 && doc.body.textContent.length > 1500));
+
+  // Detect video
+  const videoUrl = getMeta('og:video') || getMeta('og:video:url') || doc.querySelector('meta[property="og:video:secure_url"]')?.content || '';
+  const videoData = videoUrl ? { url: videoUrl, name: title, description } : null;
+
+  // Images
+  const images = Array.from(doc.querySelectorAll('img'))
+    .map(img => resolveUrl(img.src))
+    .filter(src => src && !src.startsWith('data:'))
+    .slice(0, 5);
+
+  // Breadcrumb — derive from URL path
+  const pathSegments = url.pathname.split('/').filter(Boolean);
+  const breadcrumbs = [{ name: 'Home', url: url.origin }];
+  let accumulatedPath = url.origin;
+  pathSegments.forEach(seg => {
+    accumulatedPath += '/' + seg;
+    breadcrumbs.push({
+      name: decodeURIComponent(seg).replace(/[-_]/g, ' ').replace(/\.[a-z]+$/i, '').replace(/\b\w/g, c => c.toUpperCase()),
+      url: accumulatedPath
+    });
+  });
+
+  // Word count
+  const wordCount = doc.body.textContent.split(/\s+/).filter(Boolean).length;
+
+  return {
+    sourceUrl,
+    canonical,
+    url,
+    title,
+    description,
+    ogType,
+    ogImage,
+    ogSiteName,
+    author,
+    publishedDate,
+    modifiedDate,
+    lang,
+    h1,
+    headings,
+    favicon,
+    existingLd,
+    faqs,
+    howToSteps,
+    productData,
+    isArticle,
+    videoData,
+    images,
+    breadcrumbs,
+    wordCount
+  };
+}
+
+function detectFAQs(doc) {
+  const faqs = [];
+  const questionRe = /\?$/;
+
+  // Pattern 1: <details><summary> (classic FAQ accordion)
+  doc.querySelectorAll('details').forEach(d => {
+    const q = d.querySelector('summary')?.textContent?.trim();
+    const a = Array.from(d.childNodes)
+      .filter(n => n.nodeName !== 'SUMMARY')
+      .map(n => n.textContent || '').join(' ').trim();
+    if (q && a && q.length < 300 && a.length > 10) faqs.push({ question: q, answer: a });
+  });
+
+  // Pattern 2: H2/H3 that ends with ? followed by paragraph(s)
+  if (faqs.length < 2) {
+    const headers = doc.querySelectorAll('h2, h3, h4');
+    headers.forEach(h => {
+      const text = h.textContent.trim();
+      if (!questionRe.test(text) || text.length > 300) return;
+      let answer = '';
+      let sib = h.nextElementSibling;
+      let hops = 0;
+      while (sib && !/^H[1-6]$/.test(sib.tagName) && hops < 4) {
+        if (sib.textContent.trim().length > 0) answer += ' ' + sib.textContent.trim();
+        sib = sib.nextElementSibling;
+        hops++;
+      }
+      answer = answer.trim();
+      if (answer.length > 20) faqs.push({ question: text, answer });
+    });
+  }
+
+  return faqs.slice(0, 20);
+}
+
+function detectHowTo(doc) {
+  // Pattern: ordered list with 3+ items that have meaningful length
+  const ols = doc.querySelectorAll('ol');
+  for (const ol of ols) {
+    const items = Array.from(ol.querySelectorAll(':scope > li'));
+    if (items.length >= 3) {
+      const steps = items.map((li, i) => ({
+        name: `Step ${i + 1}`,
+        text: li.textContent.trim().slice(0, 500)
+      })).filter(s => s.text.length > 15);
+      if (steps.length >= 3) return steps;
+    }
+  }
+
+  // Pattern: h2/h3 with "Step" prefix
+  const stepHeaders = Array.from(doc.querySelectorAll('h2, h3'))
+    .filter(h => /^step\s*\d+/i.test(h.textContent.trim()));
+  if (stepHeaders.length >= 2) {
+    return stepHeaders.map(h => {
+      let text = '';
+      let sib = h.nextElementSibling;
+      let hops = 0;
+      while (sib && !/^H[1-3]$/.test(sib.tagName) && hops < 3) {
+        text += ' ' + sib.textContent.trim();
+        sib = sib.nextElementSibling; hops++;
+      }
+      return { name: h.textContent.trim(), text: text.trim().slice(0, 500) };
+    });
+  }
+
+  return [];
+}
+
+function detectProduct(doc, getMeta) {
+  const ogType = getMeta('og:type');
+  const productPrice = getMeta('product:price:amount') || getMeta('og:price:amount') || '';
+  const productCurrency = getMeta('product:price:currency') || getMeta('og:price:currency') || '';
+
+  if (productPrice || ogType === 'product' || ogType === 'og:product') {
+    return {
+      price: productPrice,
+      currency: productCurrency || 'USD',
+      availability: getMeta('product:availability') || 'InStock',
+      brand: getMeta('product:brand') || ''
+    };
+  }
+  return null;
+}
+
+// --- Schema generators ---
+function generateAllSchemas(d) {
+  const schemas = [];
+
+  if (state.enabled.has('organization')) {
+    schemas.push(buildOrganization(d));
+  }
+  if (state.enabled.has('website')) {
+    schemas.push(buildWebSite(d));
+  }
+  if (state.enabled.has('webpage')) {
+    schemas.push(buildWebPage(d));
+  }
+  if (state.enabled.has('breadcrumb') && d.breadcrumbs.length > 1) {
+    schemas.push(buildBreadcrumb(d));
+  }
+  if (state.enabled.has('article') && d.isArticle) {
+    schemas.push(buildArticle(d));
+  }
+  if (state.enabled.has('faq') && d.faqs.length >= 2) {
+    schemas.push(buildFAQ(d));
+  }
+  if (state.enabled.has('howto') && d.howToSteps.length >= 2) {
+    schemas.push(buildHowTo(d));
+  }
+  if (state.enabled.has('product') && d.productData) {
+    schemas.push(buildProduct(d));
+  }
+  if (state.enabled.has('video') && d.videoData) {
+    schemas.push(buildVideo(d));
+  }
+  if (state.enabled.has('author') && d.author) {
+    schemas.push(buildPerson(d));
+  }
+
+  return schemas;
+}
+
+function buildOrganization(d) {
+  const name = d.ogSiteName || d.url.hostname.replace('www.', '').split('.')[0].replace(/\b\w/g, c => c.toUpperCase());
+  return {
+    key: 'organization',
+    title: 'Organization',
+    optional: false,
+    description: 'Core entity markup — anchors your site in Google\'s Knowledge Graph.',
+    note: 'This should live on your homepage and key pages. Replace the logo URL with your actual brand logo (min 112x112px, square).',
+    json: {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": `${d.url.origin}#organization`,
+      "name": name,
+      "url": d.url.origin,
+      "logo": {
+        "@type": "ImageObject",
+        "url": d.favicon,
+        "width": 512,
+        "height": 512
+      },
+      "sameAs": [
+        "https://twitter.com/YOUR_HANDLE",
+        "https://www.linkedin.com/company/YOUR_COMPANY",
+        "https://www.facebook.com/YOUR_PAGE"
+      ]
+    }
+  };
+}
+
+function buildWebSite(d) {
+  const name = d.ogSiteName || d.url.hostname.replace('www.', '');
+  return {
+    key: 'website',
+    title: 'WebSite',
+    optional: false,
+    description: 'Site-wide identity with optional Sitelinks search box.',
+    note: 'The SearchAction enables Google to show a search box for your site in results. Update the target URL pattern to match your actual search endpoint.',
+    json: {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": `${d.url.origin}#website`,
+      "url": d.url.origin,
+      "name": name,
+      "description": d.description || `Official website of ${name}`,
+      "publisher": { "@id": `${d.url.origin}#organization` },
+      "inLanguage": d.lang,
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": `${d.url.origin}/search?q={search_term_string}`
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  };
+}
+
+function buildWebPage(d) {
+  return {
+    key: 'webpage',
+    title: 'WebPage',
+    optional: false,
+    description: 'Specific markup for this exact URL.',
+    note: 'Connects this page to your Organization and WebSite via @id references — this is the AEO-friendly entity graph pattern.',
+    json: {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "@id": `${d.canonical}#webpage`,
+      "url": d.canonical,
+      "name": d.title,
+      "description": d.description,
+      "inLanguage": d.lang,
+      "isPartOf": { "@id": `${d.url.origin}#website` },
+      ...(d.ogImage && {
+        "primaryImageOfPage": {
+          "@type": "ImageObject",
+          "url": d.ogImage
+        }
+      }),
+      ...(d.publishedDate && { "datePublished": d.publishedDate }),
+      ...(d.modifiedDate && { "dateModified": d.modifiedDate }),
+      ...(d.breadcrumbs.length > 1 && { "breadcrumb": { "@id": `${d.canonical}#breadcrumb` } })
+    }
+  };
+}
+
+function buildBreadcrumb(d) {
+  return {
+    key: 'breadcrumb',
+    title: 'BreadcrumbList',
+    optional: false,
+    description: 'Navigation path — helps Google show breadcrumbs in results.',
+    note: 'Breadcrumb names are auto-generated from URL slugs. Review and customize them to match your actual site navigation.',
+    json: {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "@id": `${d.canonical}#breadcrumb`,
+      "itemListElement": d.breadcrumbs.map((b, i) => ({
+        "@type": "ListItem",
+        "position": i + 1,
+        "name": b.name,
+        "item": b.url
+      }))
+    }
+  };
+}
+
+function buildArticle(d) {
+  return {
+    key: 'article',
+    title: 'Article',
+    optional: false,
+    description: 'For blog posts, news, and long-form editorial content.',
+    note: `Detected article based on ${d.publishedDate ? 'publish date, ' : ''}${d.wordCount} words, and content structure. Customize author details for best results.`,
+    json: {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "@id": `${d.canonical}#article`,
+      "isPartOf": { "@id": `${d.canonical}#webpage` },
+      "headline": d.h1 || d.title,
+      "description": d.description,
+      "image": d.ogImage ? [d.ogImage] : [],
+      ...(d.publishedDate && { "datePublished": d.publishedDate }),
+      ...(d.modifiedDate && { "dateModified": d.modifiedDate }),
+      "author": d.author ? {
+        "@type": "Person",
+        "name": d.author,
+        "url": `${d.url.origin}/author/${slugify(d.author)}`
+      } : { "@id": `${d.url.origin}#organization` },
+      "publisher": { "@id": `${d.url.origin}#organization` },
+      "mainEntityOfPage": { "@id": `${d.canonical}#webpage` },
+      "wordCount": d.wordCount,
+      "inLanguage": d.lang
+    }
+  };
+}
+
+function buildFAQ(d) {
+  return {
+    key: 'faq',
+    title: 'FAQPage',
+    optional: false,
+    description: `Detected ${d.faqs.length} Q&A pair${d.faqs.length !== 1 ? 's' : ''} on the page.`,
+    note: 'FAQPage schema is highly valuable for AEO — AI Overviews and ChatGPT frequently cite FAQ answers. Review the extracted questions for accuracy.',
+    json: {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "@id": `${d.canonical}#faq`,
+      "mainEntity": d.faqs.map(f => ({
+        "@type": "Question",
+        "name": f.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": f.answer
+        }
+      }))
+    }
+  };
+}
+
+function buildHowTo(d) {
+  return {
+    key: 'howto',
+    title: 'HowTo',
+    optional: false,
+    description: `Detected ${d.howToSteps.length} steps — instructional content.`,
+    note: 'HowTo rich results were reduced by Google in 2023, but the markup still helps AI understanding (ChatGPT, Perplexity, Gemini). Keep it.',
+    json: {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "@id": `${d.canonical}#howto`,
+      "name": d.h1 || d.title,
+      "description": d.description,
+      ...(d.ogImage && { "image": d.ogImage }),
+      "step": d.howToSteps.map((s, i) => ({
+        "@type": "HowToStep",
+        "position": i + 1,
+        "name": s.name,
+        "text": s.text,
+        "url": `${d.canonical}#step-${i + 1}`
+      }))
+    }
+  };
+}
+
+function buildProduct(d) {
+  return {
+    key: 'product',
+    title: 'Product',
+    optional: false,
+    description: 'E-commerce markup for product listings.',
+    note: 'Add aggregateRating, review, and sku/gtin for best results. Google requires price and availability for merchant listings.',
+    json: {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "@id": `${d.canonical}#product`,
+      "name": d.h1 || d.title,
+      "description": d.description,
+      "image": d.ogImage ? [d.ogImage] : d.images,
+      ...(d.productData.brand && {
+        "brand": { "@type": "Brand", "name": d.productData.brand }
+      }),
+      "offers": {
+        "@type": "Offer",
+        "url": d.canonical,
+        ...(d.productData.price && { "price": d.productData.price }),
+        "priceCurrency": d.productData.currency,
+        "availability": `https://schema.org/${d.productData.availability}`,
+        "seller": { "@id": `${d.url.origin}#organization` }
+      }
+    }
+  };
+}
+
+function buildVideo(d) {
+  return {
+    key: 'video',
+    title: 'VideoObject',
+    optional: true,
+    description: 'Video metadata for video SEO.',
+    note: 'Fill in uploadDate and duration (ISO 8601, e.g. PT1M30S) for full rich result eligibility.',
+    json: {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      "name": d.videoData.name,
+      "description": d.videoData.description,
+      "thumbnailUrl": d.ogImage ? [d.ogImage] : [],
+      "contentUrl": d.videoData.url,
+      "embedUrl": d.videoData.url,
+      "uploadDate": d.publishedDate || new Date().toISOString(),
+      "duration": "PT0M0S"
+    }
+  };
+}
+
+function buildPerson(d) {
+  return {
+    key: 'author',
+    title: 'Person (Author)',
+    optional: true,
+    description: 'Author entity — important for E-E-A-T signals.',
+    note: 'Expand sameAs with the author\'s LinkedIn, Twitter, and professional profiles. AI search relies heavily on Person entities for authority.',
+    json: {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "@id": `${d.url.origin}/author/${slugify(d.author)}#person`,
+      "name": d.author,
+      "url": `${d.url.origin}/author/${slugify(d.author)}`,
+      "sameAs": [
+        "https://www.linkedin.com/in/AUTHOR_PROFILE",
+        "https://twitter.com/AUTHOR_HANDLE"
+      ]
+    }
+  };
+}
+
+function slugify(str) {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+// --- Render ---
+function renderResults(d, schemas, sourceUrl) {
+  const results = document.getElementById('results');
+  results.classList.add('active');
+
+  // Summary
+  const summary = document.getElementById('pageSummary');
+  summary.innerHTML = `
+    <div class="summary-item">
+      <div class="label">URL</div>
+      <div class="value" style="font-family:var(--mono);font-size:12px;">${escapeHtml(d.canonical)}</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">Title</div>
+      <div class="value">${escapeHtml(d.title || '—')}</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">Type detected</div>
+      <div class="value">${detectTypeLabel(d)}</div>
+    </div>
+    <div class="summary-item">
+      <div class="label">Language · Words</div>
+      <div class="value">${d.lang} · ${d.wordCount.toLocaleString()}</div>
+    </div>
+  `;
+
+  // Meta
+  const meta = document.getElementById('resultsMeta');
+  meta.innerHTML = `<strong>${schemas.length}</strong> schema${schemas.length !== 1 ? 's' : ''} generated<br>${d.existingLd.length > 0 ? `<span style="color:var(--ink-dim)">${d.existingLd.length} existing JSON-LD found on page</span>` : ''}`;
+
+  // Schemas list
+  const list = document.getElementById('schemasList');
+  list.innerHTML = '';
+
+  if (schemas.length === 0) {
+    list.innerHTML = '<div class="empty-note">No schemas generated — try enabling more options above, or the page may not contain enough recognizable content.</div>';
+    return;
+  }
+
+  schemas.forEach((schema, idx) => {
+    const scriptTag = `<script type="application/ld+json">\n${JSON.stringify(schema.json, null, 2)}\n</scr` + `ipt>`;
+    const pretty = JSON.stringify(schema.json, null, 2);
+
+    const card = document.createElement('div');
+    card.className = 'schema-card' + (idx === 0 ? ' open' : '');
+    card.innerHTML = `
+      <div class="schema-header">
+        <div class="schema-title-group">
+          <span class="schema-badge ${schema.optional ? 'optional' : ''}">${schema.optional ? 'Optional' : 'Recommended'}</span>
+          <div>
+            <div class="schema-title"><em>${escapeHtml(schema.title)}</em></div>
+            <div class="schema-desc">${escapeHtml(schema.description)}</div>
+          </div>
+        </div>
+        <div class="schema-controls">
+          <button class="icon-btn copy-btn" data-code="${idx}">Copy</button>
+          <div class="chevron">▾</div>
+        </div>
+      </div>
+      <div class="schema-body">
+        <div class="code-block">${highlight(pretty)}</div>
+        <div class="schema-note"><strong>Note</strong>${escapeHtml(schema.note)}</div>
+      </div>
+    `;
+    list.appendChild(card);
+
+    // Stash code for copying
+    card.querySelector('.copy-btn').dataset.scriptTag = scriptTag;
+  });
+
+  // Bind events
+  list.querySelectorAll('.schema-header').forEach(h => {
+    h.addEventListener('click', (e) => {
+      if (e.target.closest('.copy-btn')) return;
+      h.parentElement.classList.toggle('open');
+    });
+  });
+  list.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const tag = btn.dataset.scriptTag;
+      navigator.clipboard.writeText(tag).then(() => {
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('copied');
+        showToast('Copied — paste into your <head>');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+  });
+
+  // Scroll to results
+  setTimeout(() => results.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+function detectTypeLabel(d) {
+  const types = [];
+  if (d.isArticle) types.push('Article');
+  if (d.faqs.length >= 2) types.push('FAQ');
+  if (d.howToSteps.length >= 2) types.push('HowTo');
+  if (d.productData) types.push('Product');
+  if (d.videoData) types.push('Video');
+  if (types.length === 0) types.push('WebPage');
+  return types.join(' · ');
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function highlight(json) {
+  const escaped = escapeHtml(json);
+  return escaped
+    .replace(/(&quot;[^&]*?&quot;)(\s*:)/g, '<span class="tok-key">$1</span>$2')
+    .replace(/:\s*(&quot;[^&]*?&quot;)/g, ': <span class="tok-str">$1</span>')
+    .replace(/:\s*(-?\d+\.?\d*)/g, ': <span class="tok-num">$1</span>')
+    .replace(/:\s*(true|false|null)/g, ': <span class="tok-bool">$1</span>');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+// Demo: prefill with example on load
+window.addEventListener('load', () => {
+  document.getElementById('urlInput').focus();
+});
+</script>
+</body>
+</html>
